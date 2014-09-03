@@ -1,3 +1,6 @@
+# get ... stuff
+setxkbmap -query
+setxkbmap -print
 # get current configuration
 xkbcomp $DISPLAY out.xkb
 # use a .xkb file
