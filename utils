@@ -1,0 +1,4 @@
+# get current configuration
+xkbcomp $DISPLAY out.xkb
+# use a .xkb file
+xkbcomp out.xkb $DISPLAY
