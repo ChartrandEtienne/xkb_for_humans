@@ -1,0 +1,1 @@
+-model pc104 -symbols 'configuration(pc105)+configuration(mine)+configuration(evdev)' -geometry 'pc(pc105)' -keycodes 'evdev+aliases(qwerty)' 

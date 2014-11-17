@@ -1,0 +1,24 @@
+Setting verbose level to 10
+locale is C
+Trying to load rules file ./rules/evdev...
+Trying to load rules file /usr/share/X11/xkb/rules/evdev...
+Success.
+Applied rules from evdev:
+rules:      evdev
+model:      pc104
+layout:     ca
+variant:    multix
+options:    lv3:win_switch
+Trying to build keymap using the following components:
+keycodes:   evdev+aliases(qwerty)
+types:      complete
+compat:     complete
+symbols:    pc+ca(multix)+inet(evdev)+level3(win_switch)
+geometry:   pc(pc104)
+xkb_keymap {
+	xkb_keycodes  { include "evdev+aliases(qwerty)"	};
+	xkb_types     { include "complete"	};
+	xkb_compat    { include "complete"	};
+	xkb_symbols   { include "pc+ca(multix)+inet(evdev)+level3(win_switch)"	};
+	xkb_geometry  { include "pc(pc104)"	};
+};

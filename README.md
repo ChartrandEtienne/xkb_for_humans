@@ -6,6 +6,7 @@ The xkb, then, prints out a lot of stuff, but here we're interested in the _keyc
 
 
 [nota: I don't know how to call that mid-tier representation, so it's gonna be xxx for a future regex's sake]
+[nota 2: Doug Palmer calls those "symbolic keycodes". Nice]
 
 As typical for the X style of overengineered software, xxxs are, for most, just barely more symbolic than the original keycodes. To go on with my previous example, my key 24 produces the xxx <AD01>. Fortunately, my keycode 23 produces <TAB>. Now *that's* helpful. 
 
@@ -15,6 +16,45 @@ I don't even know what model does.
 
 keycodes is where everything remotely relevant takes place. 
 
-Right off the bat, my file has a "partial modifier_keys" clause, which maps a specifik key (it seems to be mostly arbitrary?) to a "group", which seems to be... Uh... It seems like a given chord of modifiers produces a given group, and that every regular key produces one value per group, such that, for example, none, shift, and alt-shift produce groups (example) non, shift and alt_shift, and that q produces respectively q, Q and {. 
+Right off the bat, my file has a `"partial modifier_keys"` clause, which maps a specifik key (it seems to be mostly arbitrary?) to a "group", which seems to be... Uh... It seems like a given chord of modifiers produces a given group, and that every regular key produces one value per group, such that, for example, none, shift, and alt-shift produce groups (example) non, shift and `alt_shift`, and that q produces respectively q, Q and {. 
 
 Now Modifier keys have to be mapped like regular ones before being mapped to group chords, using two different syntaxes which I don't fully grasp yet. 
+
+Where *is* that stuff?
+======================
+On my Debian, it's under /usr/share/X11/xkb
+
+
+How to create your own keymap!
+==============================
+
+Start by harvesting some information on your current keymap. So far, I realized that it's more cautious to start with as much as possible of your current keymap and slim it down and modify it starting from there, as hopefully, your current keymap will be at least *functional*. As you will probably notice while sifting through the configuration settings we'll gather just now, there's a *lot* of stuff in there, and a surprising amount of it is actually useful. I once lost control of so many keys due to a reckless deletion that I had to SSH into that machine to revert it to an earlier setting. 
+
+You can get a raw dump of the current state of the xkb server with 
+
+	xkbcomp $DISPLAY xkbcomp_output.xkb
+
+At the top of this file, you have the `xkb_keycodes` section, which maps xev's raw keycodes into "symbolic keycodes". You probably want to skip immediately to the `xkb_symbols` section. You get a line looking like `xkb_symbols "pc+ca(multix)+inet(evdev)+level3(win_switch)"`, meaning your current keyboard symbols configuration is a mish-mash of all those +-separated sets of symbols. For element say `ca(multix)`, it means that from within the file `$XKB/symbols/ca` the symbol set `multix` is included. As you will probably notice, there is a lot of overlap and settings get overwritten in ways I don't really understand yet. 
+
+It might be a good idea to separate the `xkb_symbols` section of this file and use it as the basis for one's custom symbols list; however, the remainder of the settings can be obtained with 
+
+	setxkbmap -print -verbose 10 >setxkbmap_print_output
+
+The informations thus gathered can be used to create the `.Xkbmap` file. Those seem to be pretty stable; for occidental keyboards, it looks like only the `symbols` part changes. 
+
+
+So what about with those symbols anyways?
+=========================================
+
+There's one obvious thing that's actually really safe to play around: the simplest case of a key map is of the form 
+
+	<symbol> {[keysim1, keysim2, keysim3]};
+
+Take for example 
+
+    key <AD05>	{ [         t,           T,     slash, NoSymbol,
+		       tslash,      Tslash ]	};
+
+`<AD05>` is quite simply the `T` key on my keyboard, which is quite simply mapped to `t` when pressed alone, `T` when pressed with shift, `/` when pressed with right `AltCar`, and a bunch of other random stuff when pressed with keys I don't even think I have on my keyboard. 
+
+Hopefully one day I'l know enough about the modifier keys architecture to explain I even got mine to work properly. 
